@@ -17,14 +17,6 @@ LEXHOME=${LEXHOME:-/home}/${LEXUSR}
 LOGDIR=${LOGDIR:-/var/log/lexsys}
 ## Directorio temporal donde se encuentran paquetes binarios requeridos
 TMPDIR=${TMPDIR:-/tmp}
-## Python Setuptools
-PYSETUP=${PYSETUP:-19.6.2}
-## virtualenv
-PYVENV=${PYVENV:-14.0.5}
-## PYPI
-PYPI=${PYPI:-8.0.2}
-## uWSGI
-UWSGI=${UWSGI:-2.0.12}
 ## NodeJS
 NODE=${NODE:-v4.2.6}
 
@@ -96,7 +88,7 @@ case ${LEXDB} in
   ;;
 esac
 ## Instalación de  uWSGI
-pip install uwsgi
+pip install virtualenv uwsgi
 cd ${TMPDIR}
 curl -o ${TMPDIR}/node-${NODE}-linux-x64.tar.gz https://nodejs.org/dist/v4.2.6/node-${NODE}-linux-x64.tar.gz
 ## Instalación de NodeJS y Node modules
@@ -105,132 +97,4 @@ tar --strip-components=1 \
   -xvzf ${TMPDIR}/node-${NODE}-linux-x64.tar.gz
 npm install --loglevel info -g \
   pm2 coffee-script grunt-cli bower gulp
-## TODO Need to make it self installable from this point onwards
-#su ${LEXUSR}
-## LexSys API
-#cd ${LEXAPI}
-#if [[ -d ${LEXAPI}/ENV ]]; then
-#  rm -rf ENV
-#fi
-#virtualenv ENV
-#${LEXAPI}/ENV/bin/pip install -r ${LEXAPI}/requirements.txt
-## LexSys Editor
-#cd ${LEXEDITOR}
-#if [[ -d ${LEXEDITOR}/ENV ]]; then
-#  rm -rf ENV
-#fi
-#virtualenv ENV
-#npm install
-#bower install
-## TODO vi config.json
-#grunt assets
-## LexSys Portal
-#cd ${LEXPORTAL}
-#npm install
-#bower install
-## TODO vi src/js/api/http.js
-#grunt assets
-## LexSys Desk
-#cd ${LEXDESK}
-#npm install
-## TODO vi src/config.json
-#gulp build --env production
-# Configuracion de systemd (solo para CentOS 7)
-#if [[ $OS_VERSION == *" 7."* ]]
-#then
-#	sudo cp ${HOME}/deployment_files/systemd/emperor.lexsys.service /etc/systemd/system
 
-	# Iniciar todos los servicio WSGI
-#	sudo systemctl start emperor.lexsys.service
-
-	# Registrar servicio para levantar con el inicio del sistema
-#	sudo systemctl enable emperor.lexsys.service
-#else
-#	sudo cp ${HOME}/deployment_files/upstart/emperor.lexsys.conf /etc/init/emperor-lexsys.conf
-
-	# Iniciar servicio
-#	sudo initctl start emperor-lexsys
-#fi
-
-
-
-#-------------------- Servidor proxy ----------------------
-
-# Instalacion de nginx
-#sudo yum install nginx -y
-
-# Configuracion de servidores
-#sudo cp ${HOME}/deployment_files/nginx/lexsys.conf /etc/nginx/conf.d
-
-
-#---------------------System Settings-------------------------
-
-# Configuración del firewall (solo para CentOS 7)
-#if [[ $OS_VERSION == *" 7."* ]]
-#then
-#	sudo firewall-cmd --permanent --zone=public --add-port=3002/tcp
-#	sudo firewall-cmd --permanent --zone=public --add-service=http
-#	sudo firewall-cmd --permanent --zone=public --add-service=https
-#	sudo firewall-cmd --permanent --zone=public --add-port=3001/tcp
-#	sudo firewall-cmd --permanent --zone=public --add-port=3004/tcp
-#	sudo firewall-cmd --reload
-	# Inicio del servicio
-#	sudo systemctl start nginx
-#else
-
-	# Inicio del servicio
-#	sudo /etc/init.d/nginx start
-
-#fi
-
-
-#----------------Comandos CentOS 6---------------
-
-# Iniciar el emperor
-# sudo initctl start emperor-lexsys
-
-# Detener el emperor
-# sudo initctl stop emperor-lexsys
-
-# Estatus del emperor
-# sudo initctl status emperor-lexsys
-
-# Iniciar nginx
-# sudo /etc/init.d/nginx start
-
-# Detener nginx
-# sudo /etc/init.d/nginx stop
-
-#---------------Comandos CentOS 7---------------
-
-# Iniciar el emperor
-# sudo systemctl start emperor.lexsys.service
-
-# Detener el emperor
-# sudo systemctl stop emperor.lexsys.service
-
-# Estatus del emperor
-# sudo systemctl status emperor.lexsys.service
-
-# Iniciar nginx
-# sudo systemctl start nginx
-
-# Detener nginx
-# sudo systemctl stop nginx
-
-#-----------------Errores Comunes-----------------
-
-
-# Error: OID generation failed
-# Componente: NN o PS
-# Solucion: 
-# 1. Ejecutar comando hostname
-# 2. Copiar salida del comando anterior al de la linea que inicia con 127.0.0.1 del archivo /etc/hosts
-# Referencia: http://chaos667.tumblr.com/post/20006357466/ora-21561-and-oracle-instant-client-112
-
-# Error: libclntsh.so.11.1: cannot open shared object file
-# Componente: uwsgi (NN o PS)
-# Solucion: 
-# 1. Crear el archivo /etc/ld.so.conf.d/oracle64.conf
-# 2. Poner la ruta de LD_LIBRARY_PATH en el arvhivo creado
-# 3. Ejecutar "sudo ldconfig" para que se actualicen las referencias
