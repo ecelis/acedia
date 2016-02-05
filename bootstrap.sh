@@ -26,6 +26,12 @@ LEXAPI=${LEXHOME}/wrath
 LEXEDITOR=${LEXHOME}/EDITOR
 LEXDESK=${LEXHOME}/wpride
 LEXPORTAL=${LEXHOME}/sloth
+LEXURL="http://download.lexsys.net/"
+if [[ $OS_VERSION == *" 7."* ]]; then
+  NGINXURL=${LEXURL}/el7/nginx-1.8.0-TIC.1.el7.centos.ngx.x86_64.rpm
+elif [[ $OS_VERSION == *" 6."* ]]; then
+  NGINXURL=${LEXURL}/el6/nginx-1.8.0-TIC.1.el6.ngx.x86_64.rpm
+fi
 ##
 echo -e "Iniciando instalación LexSys\n"
 echo -e "Sistema Operativo: ${OS_VERSION}\nBase de Datos: ${LEXDB}"
@@ -97,4 +103,9 @@ tar --strip-components=1 \
   -xvzf ${TMPDIR}/node-${NODE}-linux-x64.tar.gz
 npm install --loglevel info -g \
   pm2 coffee-script grunt-cli bower gulp
+## nginx
+yum -y install ${NGINXURL}
 
+
+## La siguiente debe ser la última línea del script
+exit 0
