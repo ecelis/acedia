@@ -20,4 +20,4 @@ Instalador
 
     su - lexusr
     /vagrant/makeself/makeself.sh --base64 --notemp --current \
-      /tmp/lexinstall_<DB>_<OS>.run
+      $(pwd) /tmp/lexinstall_<DB>_<OS>.run "LexSys 2 <DB> <OS>"

@@ -8,7 +8,7 @@
 ## Get Operating System version
 OS_VERSION=$(cat /etc/redhat-release)
 ## Elegir base de datos oracle | postgresql | sqlite
-LEXDB=${LEXDB:-oracle}
+LEXDB=${LEXDB:-postgresql}
 ## Usuario
 LEXUSR=${LEXUSR:-lexusr}
 ## Se declara la ruta base de la instalación
@@ -52,14 +52,14 @@ yum -y install tar gzip make gcc gcc-c++ git \
   python-devel python-pip \
   mongodb mongodb-server mongodb-devel
 cd ${TMPDIR}
-# wkhtmltox
-#if [[ $OS_VERSION == *" 6."* ]]; then
-#yum -y install \
-#  http://download.gna.org/wkhtmltopdf/0.12/0.12.2.1/wkhtmltox-0.12.2.1_linux-centos6-amd64.rpm
-#elif [[ $OS_VERSION == *" 7."* ]]; then
-#yum -y install \
-#  http://download.gna.org/wkhtmltopdf/0.12/0.12.2.1/wkhtmltox-0.12.2.1_linux-centos7-amd64.rpm
-#fi
+## wkhtmltox
+if [[ $OS_VERSION == *" 6."* ]]; then
+yum -y install \
+  http://download.gna.org/wkhtmltopdf/0.12/0.12.2.1/wkhtmltox-0.12.2.1_linux-centos6-amd64.rpm
+elif [[ $OS_VERSION == *" 7."* ]]; then
+yum -y install \
+  http://download.gna.org/wkhtmltopdf/0.12/0.12.2.1/wkhtmltox-0.12.2.1_linux-centos7-amd64.rpm
+fi
 ## Dependencias según motor de base de datos
 case ${LEXDB} in
 "postgresql")
