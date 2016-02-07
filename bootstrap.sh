@@ -32,6 +32,11 @@ if [[ $OS_VERSION == *" 7."* ]]; then
 elif [[ $OS_VERSION == *" 6."* ]]; then
   NGINXURL=${LEXURL}/el6/nginx-1.8.0-TIC.1.el6.ngx.x86_64.rpm
 fi
+if [[ $OS_VERSION == "Red Hat"*" 6."* ]]; then
+  EPEL="https://dl.fedoraproject.org/pub/epel/epel-release-latest-6.noarch.rpm"
+else
+  EPEL="epel-release"
+fi
 ##
 echo -e "Iniciando instalación LexSys\n"
 echo -e "Sistema Operativo: ${OS_VERSION}\nBase de Datos: ${LEXDB}"
@@ -45,7 +50,7 @@ mkdir -p ${LOGDIR}
 chown -R ${LEXUSR}:${LEXUSR} ${LOGDIR}
 ## Actualizacion del SO e instalación de repositorios de YUM extra
 yum update -y
-yum install epel-release -y
+yum install ${EPEL} -y
 # LexSys dependencias
 yum -y install tar gzip make gcc gcc-c++ git \
   openssl-devel pcre-devel zlib-devel \
