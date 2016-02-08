@@ -18,7 +18,9 @@ LOGDIR=${LOGDIR:-/var/log/lexsys}
 ## Directorio temporal donde se encuentran paquetes binarios requeridos
 TMPDIR=${TMPDIR:-/tmp}
 ## NodeJS
-NODE=${NODE:-v4.2.6}
+NODE_VERSION=${NODE_VERSION:-v4.2.6}
+## Python Version
+PYTHON_VERSION=${PYTHON_VERSION:-2.7}
 
 #### NO CAMBIE NADA A PARTIR DE ESTA LINEA SIN SABER EXACTAMENTE LO QUE HACE
 ## LexSys Modules
@@ -32,8 +34,14 @@ if [[ $OS_VERSION == *" 7."* ]]; then
 elif [[ $OS_VERSION == *" 6."* ]]; then
   NGINXURL=${LEXURL}/el6/nginx-1.8.0-TIC.1.el6.ngx.x86_64.rpm
 fi
+## Repositorios de terceros
 if [[ $OS_VERSION == "Red Hat"*" 6."* ]]; then
+  # EPEL
   EPEL="https://dl.fedoraproject.org/pub/epel/epel-release-latest-6.noarch.rpm"
+  # Python 2.7
+  sh -c 'wget -qO- http://people.redhat.com/bkabrda/scl_python27.repo >> /etc/yum.repos.d/scl.repo'
+elif [[ $OS_VERSION == "Red Hat"*" 7."* ]]; then
+  EPEL="https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm"
 else
   EPEL="epel-release"
 fi
@@ -41,7 +49,7 @@ fi
 echo -e "Iniciando instalación LexSys\n"
 echo -e "Sistema Operativo: ${OS_VERSION}\nBase de Datos: ${LEXDB}"
 echo -e "Usuario: ${LEXUSR}\nDirectorio: ${LEXHOME}"
-echo -e "Logs: ${LOGDIR}\nuWSGI: ${UWSGI}\nNodeJS: ${NODE}\n"
+echo -e "Logs: ${LOGDIR}\nuWSGI: ${UWSGI}\nNodeJS: ${NODE_VERSION}\n"
 sleep 5
 ## Crear usuario dueño
 useradd -m -d ${LEXHOME} -G wheel ${LEXUSR}
@@ -50,20 +58,26 @@ mkdir -p ${LOGDIR}
 chown -R ${LEXUSR}:${LEXUSR} ${LOGDIR}
 ## Actualizacion del SO e instalación de repositorios de YUM extra
 yum update -y
-yum install ${EPEL} -y
+yum install -y ${EPEL}
+## nginx
+yum -y install ${NGINXURL}
 # LexSys dependencias
-yum -y install tar gzip make gcc gcc-c++ git \
-  openssl-devel pcre-devel zlib-devel \
-  python-devel python-pip \
-  mongodb mongodb-server mongodb-devel
-cd ${TMPDIR}
-## wkhtmltox
-if [[ $OS_VERSION == *" 6."* ]]; then
-yum -y install \
-  http://download.gna.org/wkhtmltopdf/0.12/0.12.2.1/wkhtmltox-0.12.2.1_linux-centos6-amd64.rpm
-elif [[ $OS_VERSION == *" 7."* ]]; then
-yum -y install \
-  http://download.gna.org/wkhtmltopdf/0.12/0.12.2.1/wkhtmltox-0.12.2.1_linux-centos7-amd64.rpm
+if [[ $OS_VERSION == *" 7."* ]]; then
+  yum -y install tar gzip make gcc gcc-c++ git \
+    openssl-devel pcre-devel zlib-devel \
+    python-devel python-pip \
+    mongodb mongodb-server mongodb-devel
+  yum -y install \
+    http://download.gna.org/wkhtmltopdf/0.12/0.12.2.1/wkhtmltox-0.12.2.1_linux-centos7-amd64.rpm
+  pip install virtualenv uwsgi
+else
+  yum -y install tar gzip make gcc gcc-c++ git \
+    openssl-devel pcre-devel zlib-devel \
+    mongodb mongodb-server mongodb-devel
+  yum -y install \
+    http://download.gna.org/wkhtmltopdf/0.12/0.12.2.1/wkhtmltox-0.12.2.1_linux-centos6-amd64.rpm
+  easy_install-2.7 pip
+  pip2.7 install virtualenv uwsgi
 fi
 ## Dependencias según motor de base de datos
 case ${LEXDB} in
@@ -99,17 +113,14 @@ case ${LEXDB} in
   ;;
 esac
 ## Instalación de  uWSGI
-pip install virtualenv uwsgi
 cd ${TMPDIR}
-curl -o ${TMPDIR}/node-${NODE}-linux-x64.tar.gz https://nodejs.org/dist/v4.2.6/node-${NODE}-linux-x64.tar.gz
+curl -o ${TMPDIR}/node-${NODE_VERSION}-linux-x64.tar.gz https://nodejs.org/dist/v4.2.6/node-${NODE_VERSION}-linux-x64.tar.gz
 ## Instalación de NodeJS y Node modules
 cd /usr/local
 tar --strip-components=1 \
-  -xvzf ${TMPDIR}/node-${NODE}-linux-x64.tar.gz
+  -xvzf ${TMPDIR}/node-${NODE_VERSION}-linux-x64.tar.gz
 npm install --loglevel info -g \
   pm2 coffee-script grunt-cli bower gulp
-## nginx
-yum -y install ${NGINXURL}
 
 
 ## La siguiente debe ser la última línea del script
