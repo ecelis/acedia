@@ -1,0 +1,13 @@
+{
+  "apps": [
+    {
+      "name": "EDITOR_EDOMEX",
+      "cwd": "/home/SIGIPPEM/EDITOR",
+      "args": [
+        "edomex"
+      ],
+      "script": "app.coffee",
+      "exec_interpreter": "coffee"
+    }
+  ]
+}
