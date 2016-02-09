@@ -8,6 +8,8 @@ COPY oracle-instantclient12.1-basic-12.1.0.2.0-1.x86_64.rpm oracle-instantclient
 COPY oracle-instantclient12.1-devel-12.1.0.2.0-1.x86_64.rpm oracle-instantclient12.1-devel-12.1.0.2.0-1.x86_64.rpm
 
 RUN '/bootstrap.sh'
+RUN 'rm *.rpm ; \
+  rm /tmp/*.tar.gz'
 
 ENTRYPOINT ["/bin/bash"]
 
