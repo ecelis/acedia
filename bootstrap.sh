@@ -75,12 +75,12 @@ else
   yum -y install tar gzip make gcc gcc-c++ git \
     openssl-devel pcre-devel zlib-devel \
     mongodb mongodb-server mongodb-devel \
-    python27 python27-devel
+    python27 python27-python-devel
   yum -y install \
     http://download.gna.org/wkhtmltopdf/0.12/0.12.2.1/wkhtmltox-0.12.2.1_linux-centos6-amd64.rpm
-  scl enable python 'easy_install-2.7 -U setuptools'
-  scl enable python 'easy_install-2.7 pip'
-  scl enable python 'pip2.7 install virtualenv uwsgi'
+  scl enable python27 'easy_install-2.7 -U setuptools'
+  scl enable python27 'easy_install-2.7 pip'
+  scl enable python27 'pip2.7 install virtualenv uwsgi'
 fi
 ## Dependencias según motor de base de datos
 case ${LEXDB} in
@@ -115,7 +115,6 @@ case ${LEXDB} in
   ldconfig
   ;;
 esac
-## Instalación de  uWSGI
 cd ${TMPDIR}
 curl -o ${TMPDIR}/node-${NODE_VERSION}-linux-x64.tar.gz https://nodejs.org/dist/v4.2.6/node-${NODE_VERSION}-linux-x64.tar.gz
 ## Instalación de NodeJS y Node modules
