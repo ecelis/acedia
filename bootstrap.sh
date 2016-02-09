@@ -44,6 +44,7 @@ elif [[ $OS_VERSION == "Red Hat"*" 7."* ]]; then
   EPEL="https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm"
 else
   EPEL="epel-release"
+  yum -y install centos-release-scl
 fi
 ##
 echo -e "Iniciando instalación LexSys\n"
@@ -73,11 +74,13 @@ if [[ $OS_VERSION == *" 7."* ]]; then
 else
   yum -y install tar gzip make gcc gcc-c++ git \
     openssl-devel pcre-devel zlib-devel \
-    mongodb mongodb-server mongodb-devel
+    mongodb mongodb-server mongodb-devel \
+    python27 python27-devel
   yum -y install \
     http://download.gna.org/wkhtmltopdf/0.12/0.12.2.1/wkhtmltox-0.12.2.1_linux-centos6-amd64.rpm
-  easy_install-2.7 pip
-  pip2.7 install virtualenv uwsgi
+  scl enable python 'easy_install-2.7 -U setuptools'
+  scl enable python 'easy_install-2.7 pip'
+  scl enable python 'pip2.7 install virtualenv uwsgi'
 fi
 ## Dependencias según motor de base de datos
 case ${LEXDB} in
