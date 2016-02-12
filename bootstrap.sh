@@ -8,9 +8,9 @@
 ## Get Operating System version
 OS_VERSION=$(cat /etc/redhat-release)
 ## Elegir base de datos oracle | postgresql | sqlite
-LEXDB=${LEXDB:-postgresql}
+LEXDB=${LEXDB:-oracle}
 ## Usuario
-LEXUSR=${LEXUSR:-lexusr}
+LEXUSR=${LEXUSR:-SIGIPPEM}
 ## Se declara la ruta base de la instalación
 LEXHOME=${LEXHOME:-/home}/${LEXUSR}
 ## Directorio de logs
