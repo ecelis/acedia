@@ -8,9 +8,9 @@
 ## Get Operating System version
 OS_VERSION=$(cat /etc/redhat-release)
 ## Elegir base de datos oracle | postgresql | sqlite
-LEXDB=${LEXDB:-oracle}
+LEXDB=${LEXDB:-postgresql}
 ## Usuario
-LEXUSR=${LEXUSR:-SIGIPPEM}
+LEXUSR=${LEXUSR:-lexusr}
 ## Se declara la ruta base de la instalación
 LEXHOME=${LEXHOME:-/home}/${LEXUSR}
 ## Directorio de logs
@@ -70,6 +70,7 @@ if [[ $OS_VERSION == *" 7."* ]]; then
     mongodb mongodb-server mongodb-devel
   yum -y install \
     http://download.gna.org/wkhtmltopdf/0.12/0.12.2.1/wkhtmltox-0.12.2.1_linux-centos7-amd64.rpm
+  easy_install -U setuptools
   pip install virtualenv uwsgi
 else
   yum -y install tar gzip make gcc gcc-c++ git \
