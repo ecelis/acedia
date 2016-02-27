@@ -1,0 +1,18 @@
+[submodule "src/wrath"]
+	path = src/wrath
+	url = TICUser@lexsys.net:/home/TICUser/Sins/wrath
+[submodule "src/wpride"]
+	path = src/wpride
+	url = TICUser@lexsys.net:/home/TICUser/Sins/wpride
+[submodule "src/sloth"]
+	path = src/sloth
+	url = TICUser@lexsys.net:/home/TICUser/Sins/sloth
+[submodule "src/envy"]
+	path = src/envy
+	url = TICUser@lexsys.net:/home/TICUser/Sins/envy
+[submodule "src/EDITOR"]
+	path = src/EDITOR
+	url = TICUser@lexsys.net:/home/TICUser/EDITOR
+[submodule "src/deployment"]
+	path = src/deployment
+	url = git@github.com:ecelis/vainglory.git

@@ -2,16 +2,25 @@ LexSys Deployment
 =================
 
 
+    git clone git@github.com:ecelis/acedia.git
+    git add submodule git@github.com:ecelis/vainglory.git \
+      src/deployment
+    git add submodule git@github.com:admin-tic/wrath.git \
+      src/wrath
+    git add submodule git@github.com:admin-tic/wpride.git \
+      src/wpride
+    git add submodule git@github.com:admin-tic/sloth.git \
+      src/sloth
+    git add submodule git@github.com:admin-tic/envy.git \
+      src/envy
+
+
 Docker
 ------
 
 
-    curl -o lexsys.tar.gz \
-      https://github.com/ecelis/acedia/archive/master.tar.gz
-    tar -xvzf lexsys.tar.gz
-    cd acedia
     docker build -t lexsys .
-    docker run -i -t -v $(pwd):/vagrant lexsys:latest /bin/bash
+    docker run -i -t /bin/bash
 
 
 Instalador
