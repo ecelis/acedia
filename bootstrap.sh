@@ -56,6 +56,7 @@ sleep 5
 useradd -m -d ${LEXHOME} -G wheel ${LEXUSR}
 ## Crear Directorios
 mkdir -p ${LOGDIR}
+chmod 711 ${LEXHOME}
 chown -R ${LEXUSR}:${LEXUSR} ${LOGDIR}
 ## Actualizacion del SO e instalación de repositorios de YUM extra
 yum update -y
@@ -124,7 +125,6 @@ tar --strip-components=1 \
   -xvzf ${TMPDIR}/node-${NODE_VERSION}-linux-x64.tar.gz
 npm install --loglevel info -g \
   pm2 coffee-script grunt-cli bower gulp
-
 
 ## La siguiente debe ser la última línea del script
 exit 0
