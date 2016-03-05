@@ -15,4 +15,4 @@
 	url = TICUser@lexsys.net:/home/TICUser/EDITOR
 [submodule "src/deployment"]
 	path = src/deployment
-	url = git@github.com:ecelis/vainglory.git
+	url = https://github.com/ecelis/vainglory.git
