@@ -117,6 +117,7 @@ case ${LEXDB} in
   ldconfig
   ;;
 esac
+#yum -y install supervisor
 cd ${TMPDIR}
 curl -o ${TMPDIR}/node-${NODE_VERSION}-linux-x64.tar.gz https://nodejs.org/dist/v4.2.6/node-${NODE_VERSION}-linux-x64.tar.gz
 ## Instalación de NodeJS y Node modules

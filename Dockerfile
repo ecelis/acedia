@@ -23,9 +23,7 @@ COPY src/ ./
 RUN chown -R lexusr:lexusr ./
 USER lexusr
 ## Build LexSys install
-RUN deployment/build.sh
+RUN /bin/bash -l deployment/build.sh
 
-ENTRYPOINT ["/bin/bash"]
+CMD ["/bin/bash -l", "/home/lexusr/deployment/run.sh", "start"]
 
-#CMD ["nginx",
- # "uwsgi -d ]
