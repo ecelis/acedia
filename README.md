@@ -36,9 +36,26 @@ minutos. 160320945
 Instalador
 ----------
 
+El instalador se crea con Makeself una herramienta auto-extraible para
+sistemas Unix https://github.com/megastep/makeself
+
+Se puede añadir el parametro `--setup deployment/build.sh` para que
+descargue dependencias de python y nodejs después de descomprimir.
+
 
     su - lexusr
     /vagrant/makeself/makeself.sh --base64 --notemp --current \
       $(pwd) /tmp/lexinstall_<DB>_<OS>.run "LexSys 2 <DB> <OS>"
 
+
+Notas
+-----
+
+Nube docker `push` a $HOME/deployments un directorio con un
+ambiente completo y configurado. Este directorio se monta como
+volumen de un contenedor docker.
+
+Previamente a iniciar el contenedor se crea en el host una base de
+datos mongo para el editor y log del API. También se configura un host
+virtual de nginx para los módulos del sistema.
 
