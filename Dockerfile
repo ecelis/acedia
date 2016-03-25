@@ -19,11 +19,7 @@ RUN ./bootstrap.sh ; \
   yum clean all
 
 WORKDIR /home/lexusr
-COPY src/ ./
-RUN chown -R lexusr:lexusr ./
 USER lexusr
-## Build LexSys install
-RUN /bin/bash -l deployment/build.sh
 
-CMD ["/bin/bash -l", "/home/lexusr/deployment/run.sh", "start"]
+CMD ["/home/lexusr/deployment/run.sh", "start"]
 

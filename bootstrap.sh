@@ -11,6 +11,8 @@ OS_VERSION=$(cat /etc/redhat-release)
 LEXDB=${LEXDB:-postgresql}
 ## Usuario
 LEXUSR=${LEXUSR:-lexusr}
+LEXGID=${LEXGID:-1001}
+LEXUID=${LEXUID:-1001}
 ## Se declara la ruta base de la instalación
 LEXHOME=${LEXHOME:-/home}/${LEXUSR}
 ## Directorio de logs
@@ -53,7 +55,8 @@ echo -e "Usuario: ${LEXUSR}\nDirectorio: ${LEXHOME}"
 echo -e "Logs: ${LOGDIR}\nuWSGI: ${UWSGI}\nNodeJS: ${NODE_VERSION}\n"
 sleep 5
 ## Crear usuario dueño
-useradd -m -d ${LEXHOME} -G wheel ${LEXUSR}
+groupadd -g ${LEXGID} ${LEXUSR}
+useradd -m -d ${LEXHOME} -u ${LEXUID} -g ${LEXGID} -G wheel ${LEXUSR}
 ## Crear Directorios
 mkdir -p ${LOGDIR}
 chmod 711 ${LEXHOME}
@@ -128,4 +131,4 @@ npm install --loglevel info -g \
   pm2 coffee-script grunt-cli bower gulp
 
 ## La siguiente debe ser la última línea del script
-exit 0
+#exit 0
