@@ -43,7 +43,36 @@ Se puede añadir el parametro `--setup deployment/build.sh` para que
 descargue dependencias de python y nodejs después de descomprimir.
 
 
-    su - lexusr
+### Pasos para crear el instalador
+
+1. Crea un directorio de trabajo BASE_DIR ej. `mkdir /tmp/release/0.2`
+2. Ejecuta `src/build.sh`
+3. Crea el archivo `RELEASE` de acuerdo a las instrucciones más
+   adelante.
+
+
+El achivo `RELEASE` contiene los commit de git que componen una versión liberada
+
+
+    cd $BASE_DIR
+    touch RELEASE
+    cd EDITOR
+    echo "$(git log -n 1 --pretty=oneline | cut -d' ' -f 1) \
+      $(pwd | cut -d'/' -f7)" >> ../RELEASE
+    cd envy
+    echo "$(git log -n 1 --pretty=oneline | cut -d' ' -f 1) \
+      $(pwd | cut -d'/' -f7)" >> ../RELEASE
+    cd sloth
+    echo "$(git log -n 1 --pretty=oneline | cut -d' ' -f 1) \
+      $(pwd | cut -d'/' -f7)" >> ../RELEASE
+    cd wpride
+    echo "$(git log -n 1 --pretty=oneline | cut -d' ' -f 1) \
+      $(pwd | cut -d'/' -f7)" >> ../RELEASE
+    cd wrath
+    echo "$(git log -n 1 --pretty=oneline | cut -d' ' -f 1) \
+      $(pwd | cut -d'/' -f7)" >> ../RELEASE
+
+
     /vagrant/makeself/makeself.sh --base64 --notemp --current \
       $(pwd) /tmp/lexinstall_<DB>_<OS>.run "LexSys 2 <DB> <OS>"
 
