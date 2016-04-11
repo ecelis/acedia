@@ -1,6 +1,10 @@
 LexSys Deployment
 =================
 
+Este repositorio contiene scripts para construir imagenes docker,
+preparar RHEL/CentOS 6 y 7 y archivos para el despliegue de
+LexSys en varios ambientes.
+
 
     git clone git@github.com:ecelis/acedia.git
 
@@ -8,20 +12,39 @@ LexSys Deployment
 Docker
 ------
 
-### Build
+### Instalación Docker RHEL/CentOS 7
+
+Docker requiere Linux kernel 3.10 o más reciente y un sistema de 64
+bit.
+
+
+    sudo tee /etc/yum.repos.d/docker.repo <<-EOF
+    [dockerrepo]
+    name=Docker Repository
+    baseurl=https://yum.dockerproject.org/repo/main/centos/7
+    enabled=1
+    gpgcheck=1
+    gpgkey=https://yum.dockerproject.org/gpg
+    EOF
+    yum -y install docker-engine
+    systemctl enable docker
+    systemctl start docker
+
+
+### Construir Imagen Docker de LexSys
 
 `basename` identifica el ambiente base, por ejemplo Cliente A corre
 RHEL 6 con Oracle y Cliente B corre CentOS 7 con PostgreSQL, podemos
 construir imagenenes base `lexsys/cliente_a` y `lexsys/cliente_b`.
 
 `build` identifica la fecha en que se hizo el build, puede servir como
-referencia para release minor version. El formato es 2 dígitos del año,
+referencia para release minor version. El formato es 4 dígitos del año,
 2 dígitos del mes, 2 dígitos del día. Ej. 160321. Si es Necesario hacer
 más de un buld por día, puede agregarse 2 dígitos de hora y 2 dígitos de
 minutos. 160320945
 
 
-    docker build -t lexsys/<basename>:<build> .
+    docker build -t lexsys/<basename>:`date +%F` .
 
 
 ### Run
@@ -87,4 +110,9 @@ volumen de un contenedor docker.
 Previamente a iniciar el contenedor se crea en el host una base de
 datos mongo para el editor y log del API. También se configura un host
 virtual de nginx para los módulos del sistema.
+
+Referencias
+-----------
+
+* [Instalación Docker en RHEL](https://docs.docker.com/engine/installation/linux/rhel/)
 
