@@ -11,6 +11,8 @@ OS_VERSION=$(cat /etc/redhat-release)
 LEXDB=${LEXDB:-postgresql}
 ## Usuario
 LEXUSR=${LEXUSR:-lexusr}
+## OJO! uid & gid deben coincidir con los valores del usuario que
+## ejecutará el contenedor docker
 LEXGID=${LEXGID:-1001}
 LEXUID=${LEXUID:-1001}
 ## Se declara la ruta base de la instalación
