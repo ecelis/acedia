@@ -43,9 +43,13 @@ if [[ $OS_VERSION == "Red Hat"*" 6."* ]]; then
   # EPEL
   EPEL="https://dl.fedoraproject.org/pub/epel/epel-release-latest-6.noarch.rpm"
   # Python 2.7
-  sh -c 'wget -qO- http://people.redhat.com/bkabrda/scl_python27.repo >> /etc/yum.repos.d/scl.repo'
+  #sh -c 'wget -qO- http://people.redhat.com/bkabrda/scl_python27.repo >> /etc/yum.repos.d/scl.repo'
+  subscription-manager repos --enable rhel-server-rhscl-6-rpm
+  subscription-manager repos --enable rhel-6-server-optional-rpms
 elif [[ $OS_VERSION == "Red Hat"*" 7."* ]]; then
   EPEL="https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm"
+  subscription-manager repos --enable rhel-server-rhscl-7-rpm
+  subscription-manager repos --enable rhel-7-server-optional-rpms
 else
   EPEL="epel-release"
   yum -y install centos-release-scl
@@ -78,16 +82,19 @@ if [[ $OS_VERSION == *" 7."* ]]; then
     http://download.gna.org/wkhtmltopdf/0.12/0.12.2.1/wkhtmltox-0.12.2.1_linux-centos7-amd64.rpm
   easy_install -U setuptools
   pip install virtualenv uwsgi
-else
+fi
+if [[ $OS_VERSION == "Red Hat"*" 6."* ]]; then
   yum -y install tar gzip make gcc gcc-c++ git \
     openssl-devel pcre-devel zlib-devel \
-    mongodb mongodb-server mongodb-devel \
-    python27 python27-python-devel
+    rh-mongodb26 rh-mongodb26-mongo-server \
+    rh-mongodb26-mongo-runtime rh-mongodb26-mongo-devel \
+    python27 python27-python-devel \
+    python27-python-pip python27-python-virtualenv
   yum -y install \
     http://download.gna.org/wkhtmltopdf/0.12/0.12.2.1/wkhtmltox-0.12.2.1_linux-centos6-amd64.rpm
-  scl enable python27 'easy_install-2.7 -U setuptools'
-  scl enable python27 'easy_install-2.7 pip'
-  scl enable python27 'pip2.7 install virtualenv uwsgi'
+  #scl enable python27 'easy_install-2.7 -U setuptools'
+  #scl enable python27 'easy_install-2.7 pip'
+  #scl enable python27 'pip2.7 install virtualenv uwsgi'
 fi
 ## Dependencias según motor de base de datos
 case ${LEXDB} in
