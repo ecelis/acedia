@@ -95,7 +95,7 @@ if [[ $OS_VERSION == *" 6."* ]]; then
   yum -y install tar gzip make gcc gcc-c++ git \
     openssl-devel pcre-devel zlib-devel \
     rh-mongodb26 rh-mongodb26-mongodb-server \
-    rh-mongodb26-mongodb-runtime rh-mongodb26-mongodb-devel \
+    rh-mongodb26-runtime rh-mongodb26-devel \
     python27 python27-python-devel \
     python27-python-pip python27-python-virtualenv
   #scl enable python27 'easy_install-2.7 -U setuptools'
