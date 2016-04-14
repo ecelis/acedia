@@ -44,11 +44,11 @@ if [[ $OS_VERSION == "Red Hat"*" 6."* ]]; then
   EPEL="https://dl.fedoraproject.org/pub/epel/epel-release-latest-6.noarch.rpm"
   # Python 2.7
   #sh -c 'wget -qO- http://people.redhat.com/bkabrda/scl_python27.repo >> /etc/yum.repos.d/scl.repo'
-  subscription-manager repos --enable rhel-server-rhscl-6-rpm
+  subscription-manager repos --enable rhel-server-rhscl-6-rpms
   subscription-manager repos --enable rhel-6-server-optional-rpms
 elif [[ $OS_VERSION == "Red Hat"*" 7."* ]]; then
   EPEL="https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm"
-  subscription-manager repos --enable rhel-server-rhscl-7-rpm
+  subscription-manager repos --enable rhel-server-rhscl-7-rpms
   subscription-manager repos --enable rhel-7-server-optional-rpms
 else
   EPEL="epel-release"
@@ -95,6 +95,8 @@ if [[ $OS_VERSION == "Red Hat"*" 6."* ]]; then
   #scl enable python27 'easy_install-2.7 -U setuptools'
   #scl enable python27 'easy_install-2.7 pip'
   #scl enable python27 'pip2.7 install virtualenv uwsgi'
+  . /opt/rh/python27/enable
+  pip install uwsgi
 fi
 ## Dependencias según motor de base de datos
 case ${LEXDB} in
