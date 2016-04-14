@@ -83,21 +83,33 @@ if [[ $OS_VERSION == *" 7."* ]]; then
   easy_install -U setuptools
   pip install virtualenv uwsgi
 fi
-if [[ $OS_VERSION == "Red Hat"*" 6."* ]]; then
+#if [[ $OS_VERSION == "CentOS"*" 6."* ]]; then
+#   yum -y install tar gzip make gcc gcc-c++ git \
+#    openssl-devel pcre-devel zlib-devel \
+#    rh-mongodb26 rh-mongodb26-mongo-server \
+#    rh-mongodb26-mongo-runtime rh-mongodb26-mongo-devel \
+#    python27 python27-python-devel \
+#    python27-python-pip python27-python-virtualenv
+#fi
+if [[ $OS_VERSION == *" 6."* ]]; then
   yum -y install tar gzip make gcc gcc-c++ git \
     openssl-devel pcre-devel zlib-devel \
     rh-mongodb26 rh-mongodb26-mongo-server \
     rh-mongodb26-mongo-runtime rh-mongodb26-mongo-devel \
     python27 python27-python-devel \
     python27-python-pip python27-python-virtualenv
-  yum -y install \
-    http://download.gna.org/wkhtmltopdf/0.12/0.12.2.1/wkhtmltox-0.12.2.1_linux-centos6-amd64.rpm
   #scl enable python27 'easy_install-2.7 -U setuptools'
   #scl enable python27 'easy_install-2.7 pip'
   #scl enable python27 'pip2.7 install virtualenv uwsgi'
   . /opt/rh/python27/enable
+  echo '. /opt/rh/python27/enable' >> ${LEXHOME}/.bashrc
+  easy_install -U setuptools
   pip install uwsgi
+  # Add SCL binaries to lexusr PATH
 fi
+## Instala wkhtmltopdf
+yum -y install \
+  http://download.gna.org/wkhtmltopdf/0.12/0.12.2.1/wkhtmltox-0.12.2.1_linux-centos6-amd64.rpm
 ## Dependencias según motor de base de datos
 case ${LEXDB} in
 "postgresql")
