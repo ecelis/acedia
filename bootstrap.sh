@@ -8,7 +8,7 @@
 ## Get Operating System version
 OS_VERSION=$(cat /etc/redhat-release)
 ## Elegir base de datos oracle | postgresql | sqlite
-LEXDB=${LEXDB:-postgresql}
+LEXDB=${LEXDB:-oracle}
 ## Usuario
 LEXUSR=${LEXUSR:-lexusr}
 ## OJO! uid & gid deben coincidir con los valores del usuario que
@@ -52,6 +52,8 @@ elif [[ $OS_VERSION == "Red Hat"*" 7."* ]]; then
   subscription-manager repos --enable rhel-7-server-optional-rpms
 else
   EPEL="epel-release"
+  # Python 2.7
+  sh -c 'wget -qO- http://people.redhat.com/bkabrda/scl_python27.repo >> /etc/yum.repos.d/scl.repo'
   yum -y install centos-release-scl
 fi
 ##
@@ -129,8 +131,8 @@ case ${LEXDB} in
   ;;
 "oracle")
   yum -y install libaio
-  rpm -Uvh /oracle-instantclient*.rpm
-  #rpm -Uvh ${TMPDIR}/oracle-instantclient*.rpm
+#  rpm -Uvh /oracle-instantclient*.rpm
+  rpm -Uvh ${TMPDIR}/oracle-instantclient*.rpm
   if [[ -d /usr/lib/oracle/11.2/client64 ]]; then
     ORACLE_HOME=/usr/lib/oracle/11.2/client64
     LD_LIBRARY_PATH=${ORACLE_HOME}/lib
