@@ -8,7 +8,7 @@
 ## Get Operating System version
 OS_VERSION=$(cat /etc/redhat-release)
 ## Elegir base de datos oracle | postgresql | sqlite
-LEXDB=${LEXDB:-oracle}
+LEXDB=${LEXDB:-postgresql}
 ## Usuario
 LEXUSR=${LEXUSR:-lexusr}
 ## OJO! uid & gid deben coincidir con los valores del usuario que
@@ -16,9 +16,9 @@ LEXUSR=${LEXUSR:-lexusr}
 LEXGID=${LEXGID:-1001}
 LEXUID=${LEXUID:-1001}
 ## Se declara la ruta base de la instalación
-LEXHOME=${LEXHOME:-/home}/${LEXUSR}
+LEXHOME=${LEXHOME:-/opt}/${LEXUSR}
 ## Directorio de logs
-LOGDIR=${LOGDIR:-/var/log/lexsys}
+LOGDIR=${LOGDIR:-/opt/lexusr/log}
 ## Directorio temporal donde se encuentran paquetes binarios requeridos
 TMPDIR=${TMPDIR:-/tmp}
 ## NodeJS
@@ -39,6 +39,7 @@ elif [[ $OS_VERSION == *" 6."* ]]; then
   NGINXURL=${LEXURL}/el6/nginx-1.8.0-TIC.1.el6.ngx.x86_64.rpm
 fi
 ## Repositorios de terceros
+EPEL="epel-release"
 if [[ $OS_VERSION == "Red Hat"*" 6."* ]]; then
   # EPEL
   EPEL="https://dl.fedoraproject.org/pub/epel/epel-release-latest-6.noarch.rpm"
@@ -50,11 +51,13 @@ elif [[ $OS_VERSION == "Red Hat"*" 7."* ]]; then
   EPEL="https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm"
   subscription-manager repos --enable rhel-server-rhscl-7-rpms
   subscription-manager repos --enable rhel-7-server-optional-rpms
-else
-  EPEL="epel-release"
+elif [[ $OS_VERSION == "CentOS"*" 6."* ]]; then
+#  yum -y install ${EPEL}
   # Python 2.7
-  sh -c 'wget -qO- http://people.redhat.com/bkabrda/scl_python27.repo >> /etc/yum.repos.d/scl.repo'
+  sh -c 'curl -o /etc/yum.repos.d/scl.repo http://people.redhat.com/bkabrda/scl_python27.repo'
   yum -y install centos-release-scl
+elif [[ $OS_VERSION == "CentOS"*" 7."* ]]; then
+#  yum -y install ${EPEL}
 fi
 ##
 echo -e "Iniciando instalación LexSys\n"
