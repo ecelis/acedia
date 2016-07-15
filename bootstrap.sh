@@ -1,7 +1,7 @@
+## por ejemplo:
 #!/bin/bash
 ##
 ## Los valores de las variables pueden cambiarse al momento de ejecución
-## por ejemplo:
 ##
 ## LEXUSR=someuser LEXHOME=/opt/somedir lexinstall.sh
 ##
@@ -10,17 +10,17 @@ OS_VERSION=$(cat /etc/redhat-release)
 ## Elegir base de datos oracle | postgresql | sqlite
 LEXDB=${LEXDB:-postgresql}
 ## Usuario
-LEXUSR=${LEXUSR:-lexusr}
+LEXUSR=${LEXUSR:-vagrant}
 ## OJO! uid & gid deben coincidir con los valores del usuario que
 ## ejecutará el contenedor docker
-LEXGID=${LEXGID:-1001}
-LEXUID=${LEXUID:-1001}
+LEXGID=${LEXGID:-1000}
+LEXUID=${LEXUID:-1000}
 ## Se declara la ruta base de la instalación
-LEXHOME=${LEXHOME:-/opt}/${LEXUSR}
+LEXHOME=${LEXHOME:-/home/${LEXUSR}}
 ## Directorio de logs
-LOGDIR=${LOGDIR:-/opt/lexusr/log}
+LOGDIR=${LOGDIR:-${LEXHOME}/log}
 ## Directorio temporal donde se encuentran paquetes binarios requeridos
-TMPDIR=${TMPDIR:-/tmp}
+TMPDIR=${TMPDIR:-/vagrant}
 ## NodeJS
 NODE_VERSION=${NODE_VERSION:-v4.2.6}
 ## Python Version
@@ -45,19 +45,21 @@ if [[ $OS_VERSION == "Red Hat"*" 6."* ]]; then
   EPEL="https://dl.fedoraproject.org/pub/epel/epel-release-latest-6.noarch.rpm"
   # Python 2.7
   #sh -c 'wget -qO- http://people.redhat.com/bkabrda/scl_python27.repo >> /etc/yum.repos.d/scl.repo'
+  subscription-manager register --username ernestotic --password Bubnihua2014rh
+  subscription-manager attach
   subscription-manager repos --enable rhel-server-rhscl-6-rpms
   subscription-manager repos --enable rhel-6-server-optional-rpms
 elif [[ $OS_VERSION == "Red Hat"*" 7."* ]]; then
   EPEL="https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm"
+  ## TODO subscription-manager function
   subscription-manager repos --enable rhel-server-rhscl-7-rpms
   subscription-manager repos --enable rhel-7-server-optional-rpms
 elif [[ $OS_VERSION == "CentOS"*" 6."* ]]; then
-#  yum -y install ${EPEL}
   # Python 2.7
   sh -c 'curl -o /etc/yum.repos.d/scl.repo http://people.redhat.com/bkabrda/scl_python27.repo'
   yum -y install centos-release-scl
 elif [[ $OS_VERSION == "CentOS"*" 7."* ]]; then
-#  yum -y install ${EPEL}
+  echo TODO
 fi
 ##
 echo -e "Iniciando instalación LexSys\n"
@@ -86,7 +88,7 @@ if [[ $OS_VERSION == *" 7."* ]]; then
   yum -y install \
     http://download.gna.org/wkhtmltopdf/0.12/0.12.2.1/wkhtmltox-0.12.2.1_linux-centos7-amd64.rpm
   easy_install -U setuptools
-  pip install virtualenv uwsgi
+  pip install virtualenv
 fi
 #if [[ $OS_VERSION == "CentOS"*" 6."* ]]; then
 #   yum -y install tar gzip make gcc gcc-c++ git \
