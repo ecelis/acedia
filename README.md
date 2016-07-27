@@ -1,5 +1,4 @@
-LexSys Deployment
-=================
+# LexSys Deployment
 
 Este repositorio contiene scripts para construir imagenes docker,
 preparar RHEL/CentOS 6 y 7 y archivos para el despliegue de
@@ -9,13 +8,14 @@ LexSys en varios ambientes.
     git clone git@github.com:ecelis/acedia.git
 
 
-Docker
-------
+## Docker
 
 ### Instalación Docker RHEL/CentOS 7
 
 Docker requiere Linux kernel 3.10 o más reciente y un sistema de 64
 bit.
+
+Instalación de Docker en RHEL/CentOS
 
 
     sudo tee /etc/yum.repos.d/docker.repo <<-EOF
@@ -31,6 +31,23 @@ bit.
     systemctl start docker
 
 
+Instalación de Docker en Debian 8 (Jessie)
+
+
+    apt-get purge lxc-docker*
+    apt-get purge docker.io*
+    apt-get update
+    apt-get install apt-transport-https ca-certificates
+    apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 \
+      --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
+    echo 'deb https://apt.dockerproject.org/repo debian-jessie main' > \
+      /etc/apt/sources.list.d/docker.list
+    apt-get update
+    apt-cache policy docker-engine
+    sudo apt-get update
+    sudo apt-get install docker-engine
+
+
 ### Construir Imagen Docker de LexSys
 
 `basename` identifica el ambiente base, por ejemplo Cliente A corre
@@ -44,7 +61,7 @@ más de un buld por día, puede agregarse 2 dígitos de hora y 2 dígitos de
 minutos. 160320945
 
 
-    docker build -t lexsys/<basename>:`date +%F` .
+    docker build -t lexsys/<basename>:`date +%F-%H%M` .
 
 
 ### Run
@@ -56,11 +73,16 @@ minutos. 160320945
 
 
 
-Instalador
-----------
+## Instalador
 
 El instalador se crea con Makeself una herramienta auto-extraible para
 sistemas Unix https://github.com/megastep/makeself
+
+
+    cd $TMPDIR
+    git clone https://github.com/megastep/makeself
+
+
 
 Se puede añadir el parametro `--setup deployment/build.sh` para que
 descargue dependencias de python y nodejs después de descomprimir.
@@ -97,11 +119,11 @@ El achivo `RELEASE` contiene los commit de git que componen una versión liberad
 
 
     /vagrant/makeself/makeself.sh --base64 --notemp --current \
-      $(pwd) /tmp/lexinstall_<DB>_<OS>.run "LexSys 2 <DB> <OS>"
+      $(pwd) /tmp/lexinstall-<DB>-<OS>.run "LexSys 2 <DB> <OS>"
 
 
-Notas
------
+### Notas
+
 
 Nube docker `push` a $HOME/deployments un directorio con un
 ambiente completo y configurado. Este directorio se monta como
@@ -111,8 +133,6 @@ Previamente a iniciar el contenedor se crea en el host una base de
 datos mongo para el editor y log del API. También se configura un host
 virtual de nginx para los módulos del sistema.
 
-Referencias
------------
+## Referencias
 
 * [Instalación Docker en RHEL](https://docs.docker.com/engine/installation/linux/rhel/)
-
