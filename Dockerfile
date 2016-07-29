@@ -4,7 +4,7 @@
 ##
 ##    docker -t lexsys:[tag] .
 ##
-FROM centos:6
+FROM centos:7
 MAINTAINER Ernesto Celis <ernesto@tic.uno>
 
 ## Bootstrap Operating System
@@ -18,7 +18,7 @@ RUN ./bootstrap.sh ; \
   rm -rf /root/.npm ; \
   yum clean all
 
-#WORKDIR /home/lexusr
-#USER lexusr
+WORKDIR /home/SAP3
+USER SAP3
 
 #CMD ["/home/lexusr/deployment/run.sh", "start"]

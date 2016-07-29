@@ -103,14 +103,6 @@ if [[ $OS_VERSION == *" 7."* ]]; then
   easy_install -U setuptools
   pip install virtualenv
 fi
-#if [[ $OS_VERSION == "CentOS"*" 6."* ]]; then
-#   yum -y install tar gzip make gcc gcc-c++ git \
-#    openssl-devel pcre-devel zlib-devel \
-#    rh-mongodb26 rh-mongodb26-mongo-server \
-#    rh-mongodb26-mongo-runtime rh-mongodb26-mongo-devel \
-#    python27 python27-python-devel \
-#    python27-python-pip python27-python-virtualenv
-#fi
 
 ## Instala wkhtmltopdf
 yum -y install \
@@ -154,8 +146,9 @@ curl -o ${TMPDIR}/node-${NODE_VERSION}-linux-x64.tar.gz https://nodejs.org/dist/
 cd /usr/local
 tar --strip-components=1 \
   -xvzf ${TMPDIR}/node-${NODE_VERSION}-linux-x64.tar.gz
+sleep 5 # Sometimes it fails installing NPM packages, lets wait a moment
 npm install --loglevel info -g \
-  pm2 coffee-script grunt-cli bower gulp
+  pm2 coffee-script grunt-cli bower gulp pm2
 
 ## La siguiente debe ser la última línea del script
 exit 0
