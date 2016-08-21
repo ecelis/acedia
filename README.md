@@ -1,8 +1,13 @@
 # LexSys Deployment
 
-Este repositorio contiene scripts para construir imagenes docker,
-preparar RHEL/CentOS 6 y 7 y archivos para el despliegue de
-LexSys en varios ambientes.
+This repository holds scripts to build and ship docker images for LexSys
+deployment.
+
+There are two images, one is the Base Image which holds everything
+needed to run all LexSys modules.
+
+The Main Image is built based of Base Image and it holds an actual
+LexSys install ready to be deployed.
 
 
     git clone git@github.com:ecelis/acedia.git
@@ -10,12 +15,10 @@ LexSys en varios ambientes.
 
 ## Docker
 
-### Instalación Docker RHEL/CentOS 7
+Docker requires Linux kernel 3.10 or later on a 64 bit system.
 
-Docker requiere Linux kernel 3.10 o más reciente y un sistema de 64
-bit.
 
-Instalación de Docker en RHEL/CentOS
+#### Install Docker in RHEL/CentOS
 
 
     sudo tee /etc/yum.repos.d/docker.repo <<-EOF
@@ -31,7 +34,7 @@ Instalación de Docker en RHEL/CentOS
     systemctl start docker
 
 
-Instalación de Docker en Debian 8 (Jessie)
+#### Install Docker in Debian 8 (Jessie)
 
 
     apt-get purge lxc-docker*
@@ -48,17 +51,11 @@ Instalación de Docker en Debian 8 (Jessie)
     sudo apt-get install docker-engine
 
 
-### Construir Imagen Docker de LexSys
+### Build Base Image
 
-`basename` identifica el ambiente base, por ejemplo Cliente A corre
-RHEL 6 con Oracle y Cliente B corre CentOS 7 con PostgreSQL, podemos
-construir imagenenes base `lexsys/cliente_a` y `lexsys/cliente_b`.
+`basename` tells the operating system and database.
 
-`build` identifica la fecha en que se hizo el build, puede servir como
-referencia para release minor version. El formato es 4 dígitos del año,
-2 dígitos del mes, 2 dígitos del día. Ej. 160321. Si es Necesario hacer
-más de un buld por día, puede agregarse 2 dígitos de hora y 2 dígitos de
-minutos. 160320945
+`build` it tells the build date.
 
 
     docker build -t lexsys/<basename>:`date +%F-%H%M` .

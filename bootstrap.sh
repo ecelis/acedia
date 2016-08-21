@@ -8,9 +8,9 @@
 ## Get Operating System version
 OS_VERSION=$(cat /etc/redhat-release)
 ## Elegir base de datos oracle | postgresql | sqlite
-LEXDB=${LEXDB:-oracle}
+#LEXDB=${LEXDB:-oracle}
 ## Usuario
-LEXUSR=${LEXUSR:-SAP3}
+LEXUSR=${LEXUSR:-lexusr}
 ## OJO! uid & gid deben coincidir con los valores del usuario que
 ## ejecutará el contenedor docker
 LEXGID=${LEXGID:-1000}
@@ -22,7 +22,7 @@ LOGDIR=${LOGDIR:-${LEXHOME}/log}
 ## Directorio temporal donde se encuentran paquetes binarios requeridos
 TMPDIR=${TMPDIR:-/tmp}
 ## NodeJS
-NODE_VERSION=${NODE_VERSION:-v4.2.6}
+NODE_VERSION=${NODE_VERSION:-v4.5.0}
 ## Python Version
 PYTHON_VERSION=${PYTHON_VERSION:-2.7}
 
@@ -108,8 +108,8 @@ fi
 yum -y install \
   http://download.gna.org/wkhtmltopdf/0.12/0.12.2.1/wkhtmltox-0.12.2.1_linux-centos6-amd64.rpm
 ## Dependencias según motor de base de datos
-case ${LEXDB} in
-"postgresql")
+#case ${LEXDB} in
+#"postgresql")
   if [[ $OS_VERSION == *" 7."* ]]; then
     # CentOS 7 yum install http://yum.postgresql.org/9.4/redhat/rhel-7-x86_64/pgdg-centos94-9.4-2.noarch.rpm -y
     yum -y install http://yum.postgresql.org/9.4/redhat/rhel-7-x86_64/pgdg-centos94-9.4-2.noarch.rpm
@@ -123,8 +123,8 @@ case ${LEXDB} in
     postgresql94 postgresql94-contrib postgresql94-devel
   # Add psql binaries to lexusr PATH
   echo 'export PATH=/usr/pgsql-9.4/bin:$PATH' >> ${LEXHOME}/.bash_profile
-  ;;
-"oracle")
+#  ;;
+#"oracle")
   yum -y install libaio
   rpm -Uvh ${TMPDIR}/oracle-instantclient*.rpm
   if [[ -d /usr/lib/oracle/11.2/client64 ]]; then
@@ -137,15 +137,15 @@ case ${LEXDB} in
   echo "export ORACLE_HOME=${ORACLE_HOME}" >> ${LEXHOME}/.bash_profile
   echo "export LD_LIBRARY_PATH=$ORACLE_HOME/lib" >> ${LEXHOME}/.bash_profile
   ldconfig
-  ;;
-esac
+#  ;;
+#esac
 #yum -y install supervisor
 cd ${TMPDIR}
-curl -o ${TMPDIR}/node-${NODE_VERSION}-linux-x64.tar.gz https://nodejs.org/dist/v4.2.6/node-${NODE_VERSION}-linux-x64.tar.gz
+curl -o ${TMPDIR}/node-${NODE_VERSION}-linux-x64.tar.xz https://nodejs.org/dist/${NODE_VERSION}/node-${NODE_VERSION}-linux-x64.tar.xz
 ## Instalación de NodeJS y Node modules
 cd /usr/local
 tar --strip-components=1 \
-  -xvzf ${TMPDIR}/node-${NODE_VERSION}-linux-x64.tar.gz
+  -xvJf ${TMPDIR}/node-${NODE_VERSION}-linux-x64.tar.xz
 sleep 5 # Sometimes it fails installing NPM packages, lets wait a moment
 npm install --loglevel info -g \
   pm2 coffee-script grunt-cli bower gulp pm2
