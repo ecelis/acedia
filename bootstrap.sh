@@ -122,7 +122,7 @@ yum -y install \
   yum -y install libpqxx libpqxx-devel \
     postgresql94 postgresql94-contrib postgresql94-devel
   # Add psql binaries to lexusr PATH
-  echo 'export PATH=/usr/pgsql-9.4/bin:$PATH' >> ${LEXHOME}/.bash_profile
+  echo 'export PATH=/usr/pgsql-9.4/bin:$PATH' >> ${LEXHOME}/.profile
 #  ;;
 #"oracle")
   yum -y install libaio
@@ -134,8 +134,8 @@ yum -y install \
     ORACLE_HOME=/usr/lib/oracle/12.1/client64
     LD_LIBRARY_PATH=${ORACLE_HOME}/lib
   fi
-  echo "export ORACLE_HOME=${ORACLE_HOME}" >> ${LEXHOME}/.bash_profile
-  echo "export LD_LIBRARY_PATH=$ORACLE_HOME/lib" >> ${LEXHOME}/.bash_profile
+  echo "export ORACLE_HOME=${ORACLE_HOME}" >> ${LEXHOME}/.profile
+  echo "export LD_LIBRARY_PATH=$ORACLE_HOME/lib" >> ${LEXHOME}/.profile
   ldconfig
 #  ;;
 #esac
