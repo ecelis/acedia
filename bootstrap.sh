@@ -89,7 +89,8 @@ if [[ $OS_VERSION == *" 6."* ]]; then
     python27 python27-python-devel \
     python27-python-pip python27-python-virtualenv
   . /opt/rh/python27/enable
-  echo '. /opt/rh/python27/enable' >> ${LEXHOME}/.bash_profile
+  echo '. /opt/rh/python27/enable' >> /etc/profile
+  #echo '. /opt/rh/python27/enable' >> ${LEXHOME}/.bash_profile
   easy_install -U setuptools
   pip install virtualenv
 fi
@@ -114,7 +115,6 @@ yum -y install \
     # CentOS 7 yum install http://yum.postgresql.org/9.4/redhat/rhel-7-x86_64/pgdg-centos94-9.4-2.noarch.rpm -y
     yum -y install http://yum.postgresql.org/9.4/redhat/rhel-7-x86_64/pgdg-centos94-9.4-2.noarch.rpm
     # Add psql binaries to lexusr PATH
-    echo 'export PATH=/usr/pgsql-9.4/bin:$PATH' >> ${LEXHOME}/.bash_profile
   elif [[ $OS_VERSION == *" 6."* ]]; then
     # CentOS 6 http://yum.postgresql.org/9.4/redhat/rhel-6-x86_64/pgdg-centos94-9.4-2.noarch.rpm
     yum install http://yum.postgresql.org/9.4/redhat/rhel-6-x86_64/pgdg-redhat94-9.4-1.noarch.rpm -y
@@ -122,7 +122,8 @@ yum -y install \
   yum -y install libpqxx libpqxx-devel \
     postgresql94 postgresql94-contrib postgresql94-devel
   # Add psql binaries to lexusr PATH
-  echo 'export PATH=/usr/pgsql-9.4/bin:$PATH' >> ${LEXHOME}/.profile
+  echo 'export PATH=/usr/pgsql-9.4/bin:$PATH' >> /etc/profile
+  #echo 'export PATH=/usr/pgsql-9.4/bin:$PATH' >> ${LEXHOME}/.profile
 #  ;;
 #"oracle")
   yum -y install libaio
@@ -134,8 +135,10 @@ yum -y install \
     ORACLE_HOME=/usr/lib/oracle/12.1/client64
     LD_LIBRARY_PATH=${ORACLE_HOME}/lib
   fi
-  echo "export ORACLE_HOME=${ORACLE_HOME}" >> ${LEXHOME}/.profile
-  echo "export LD_LIBRARY_PATH=$ORACLE_HOME/lib" >> ${LEXHOME}/.profile
+  echo "export ORACLE_HOME=${ORACLE_HOME}" >> /etc/profile
+  echo "export LD_LIBRARY_PATH=$ORACLE_HOME/lib" >> /etc/profile
+  #echo "export ORACLE_HOME=${ORACLE_HOME}" >> ${LEXHOME}/.profile
+  #echo "export LD_LIBRARY_PATH=$ORACLE_HOME/lib" >> ${LEXHOME}/.profile
   ldconfig
 #  ;;
 #esac
