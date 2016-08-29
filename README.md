@@ -12,4 +12,8 @@ LexSys install ready to be deployed.
 
 
     git clone git@github.com:ecelis/acedia.git
-    docker build -t lexsys/base:`date +%F-%H%M` .
+    cd acedia
+    docker build -t lexsys/base:harley .
+
+
+* Current release is **Harley Quinn**
