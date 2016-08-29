@@ -8,7 +8,7 @@
 ## Get Operating System version
 OS_VERSION=$(cat /etc/redhat-release)
 ## Elegir base de datos oracle | postgresql | sqlite
-#LEXDB=${LEXDB:-oracle}
+LEXDB=${LEXDB:-oracle}
 ## Usuario
 LEXUSR=${LEXUSR:-lexusr}
 ## OJO! uid & gid deben coincidir con los valores del usuario que
@@ -34,9 +34,9 @@ LEXDESK=${LEXHOME}/wpride
 LEXPORTAL=${LEXHOME}/sloth
 LEXURL="http://download.lexsys.net/"
 if [[ $OS_VERSION == *" 7."* ]]; then
-  NGINXURL=${LEXURL}/el7/nginx-1.8.0-TIC.1.el7.centos.ngx.x86_64.rpm
+  NGINXURL=https://github.com/ecelis/nginx-headers-more-rpm/releases/download/1.10.1-TIC1/nginx-1.10.1-TIC1.el7.centos.ngx.x86_64.rpm
 elif [[ $OS_VERSION == *" 6."* ]]; then
-  NGINXURL=${LEXURL}/el6/nginx-1.8.0-TIC.1.el6.ngx.x86_64.rpm
+  NGINXURL=https://github.com/ecelis/nginx-headers-more-rpm/releases/download/1.10.1-TIC1/nginx-1.10.1-TIC1.el6.ngx.x86_64.rpm
 fi
 ## Repositorios de terceros
 function register-rhsystem {
@@ -66,7 +66,7 @@ fi
 echo -e "Iniciando instalación LexSys\n"
 echo -e "Sistema Operativo: ${OS_VERSION}\nBase de Datos: ${LEXDB}"
 echo -e "Usuario: ${LEXUSR}\nDirectorio: ${LEXHOME}"
-echo -e "Logs: ${LOGDIR}\nuWSGI: ${UWSGI}\nNodeJS: ${NODE_VERSION}\n"
+echo -e "Logs: ${LOGDIR}\nNodeJS: ${NODE_VERSION}\n"
 sleep 5
 ## Crear usuario dueño
 groupadd -g ${LEXGID} ${LEXUSR}
@@ -90,7 +90,6 @@ if [[ $OS_VERSION == *" 6."* ]]; then
     python27-python-pip python27-python-virtualenv
   . /opt/rh/python27/enable
   echo '. /opt/rh/python27/enable' >> /etc/profile
-  #echo '. /opt/rh/python27/enable' >> ${LEXHOME}/.bash_profile
   easy_install -U setuptools
   pip install virtualenv
 fi
@@ -123,10 +122,12 @@ yum -y install \
     postgresql94 postgresql94-contrib postgresql94-devel
   # Add psql binaries to lexusr PATH
   echo 'export PATH=/usr/pgsql-9.4/bin:$PATH' >> /etc/profile
-  #echo 'export PATH=/usr/pgsql-9.4/bin:$PATH' >> ${LEXHOME}/.profile
 #  ;;
 #"oracle")
   yum -y install libaio
+  cd ${TMPDIR}
+  curl -LO http://descarga.lexsys.net/oracle/oracle-instantclient12.1-basic-12.1.0.2.0-1.x86_64.rpm
+  curl -LO http://descarga.lexsys.net/oracle/oracle-instantclient12.1-devel-12.1.0.2.0-1.x86_64.rpm
   rpm -Uvh ${TMPDIR}/oracle-instantclient*.rpm
   if [[ -d /usr/lib/oracle/11.2/client64 ]]; then
     ORACLE_HOME=/usr/lib/oracle/11.2/client64
@@ -137,14 +138,12 @@ yum -y install \
   fi
   echo "export ORACLE_HOME=${ORACLE_HOME}" >> /etc/profile
   echo "export LD_LIBRARY_PATH=$ORACLE_HOME/lib" >> /etc/profile
-  #echo "export ORACLE_HOME=${ORACLE_HOME}" >> ${LEXHOME}/.profile
-  #echo "export LD_LIBRARY_PATH=$ORACLE_HOME/lib" >> ${LEXHOME}/.profile
   ldconfig
 #  ;;
 #esac
 #yum -y install supervisor
 cd ${TMPDIR}
-curl -o ${TMPDIR}/node-${NODE_VERSION}-linux-x64.tar.xz https://nodejs.org/dist/${NODE_VERSION}/node-${NODE_VERSION}-linux-x64.tar.xz
+curl -LO https://nodejs.org/dist/${NODE_VERSION}/node-${NODE_VERSION}-linux-x64.tar.xz
 ## Instalación de NodeJS y Node modules
 cd /usr/local
 tar --strip-components=1 \

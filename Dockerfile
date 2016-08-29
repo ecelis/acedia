@@ -9,16 +9,11 @@ MAINTAINER Ernesto Celis <ernesto@tic.uno>
 
 ## Bootstrap Operating System
 COPY bootstrap.sh ./
-COPY oracle-instantclient11.2-basic-11.2.0.4.0-1.x86_64.rpm /tmp/oracle-instantclient11.2-basic-11.2.0.4.0-1.x86_64.rpm
-COPY oracle-instantclient11.2-devel-11.2.0.4.0-1.x86_64.rpm /tmp/oracle-instantclient11.2-devel-11.2.0.4.0-1.x86_64.rpm
+#ADD http://descarga.lexsys.net/oracle/oracle-instantclient12.1-basic-12.1.0.2.0-1.x86_64.rpm /tmp
+#ADD http://descarga.lexsys.net/oracle/oracle-instantclient12.1-devel-12.1.0.2.0-1.x86_64.rpm /tmp
 RUN ./bootstrap.sh ; \
   rm /tmp/*.rpm ; \
   rm /tmp/*.tar.?z ; \
   rm -rf /tmp/npm* ; \
   rm -rf /root/.npm ; \
   yum clean all
-
-#WORKDIR /home/lexusr
-#USER lexusr
-
-#CMD ["/home/lexusr/deployment/run.sh", "start"]
