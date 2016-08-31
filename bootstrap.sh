@@ -13,8 +13,8 @@ LEXDB=${LEXDB:-oracle}
 LEXUSR=${LEXUSR:-lexusr}
 ## OJO! uid & gid deben coincidir con los valores del usuario que
 ## ejecutará el contenedor docker
-LEXGID=${LEXGID:-1000}
-LEXUID=${LEXUID:-1000}
+LEXGID=${LEXGID:-1001}
+LEXUID=${LEXUID:-1001}
 ## Se declara la ruta base de la instalación
 LEXHOME=${LEXHOME:-/home/${LEXUSR}}
 ## Directorio de logs
@@ -87,7 +87,7 @@ if [[ $OS_VERSION == *" 6."* ]]; then
     rh-mongodb26 rh-mongodb26-mongodb-server \
     rh-mongodb26-runtime rh-mongodb26-devel \
     python27 python27-python-devel \
-    python27-python-pip python27-python-virtualenv
+    python27-python-pip python27-python-virtualenv sudo
   . /opt/rh/python27/enable
   echo '. /opt/rh/python27/enable' >> /etc/profile
   easy_install -U setuptools
@@ -97,7 +97,7 @@ if [[ $OS_VERSION == *" 7."* ]]; then
   yum -y install tar gzip make gcc gcc-c++ git \
     openssl-devel pcre-devel zlib-devel \
     python-devel python-pip \
-    mongodb mongodb-server mongodb-devel
+    mongodb mongodb-server mongodb-devel sudo
   yum -y install \
     http://download.gna.org/wkhtmltopdf/0.12/0.12.2.1/wkhtmltox-0.12.2.1_linux-centos7-amd64.rpm
   easy_install -U setuptools
