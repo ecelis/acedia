@@ -1,44 +1,44 @@
 #!/bin/bash
 ##
-## Los valores de las variables pueden cambiarse al momento de ejecución
-## por ejemplo:
+## Environment variables default values can be changed at runtime
 ##
-## LEXUSR=someuser LEXHOME=/opt/somedir lexinstall.sh
+## LEXUSR=someuser LEXHOME=/opt/somedir bootstrap.sh
 ##
 ## Get Operating System version
 OS_VERSION=$(cat /etc/redhat-release)
-## Elegir base de datos oracle | postgresql | sqlite
-LEXDB=${LEXDB:-oracle}
-## Usuario
+## LexSys operating system user
 LEXUSR=${LEXUSR:-lexusr}
-## OJO! uid & gid deben coincidir con los valores del usuario que
-## ejecutará el contenedor docker
+## BEWARE! uid & gid must be the same as the user who runs the container
 LEXGID=${LEXGID:-1001}
 LEXUID=${LEXUID:-1001}
-## Se declara la ruta base de la instalación
+## Filesystem path where LexSys will live
 LEXHOME=${LEXHOME:-/home/${LEXUSR}}
-## Directorio de logs
+## Log directory
 LOGDIR=${LOGDIR:-${LEXHOME}/log}
-## Directorio temporal donde se encuentran paquetes binarios requeridos
+## Temporary directory with required packages for install
 TMPDIR=${TMPDIR:-/tmp}
-## NodeJS
+## NodeJS version, check http://nodejs.org and choose the stable version
 NODE_VERSION=${NODE_VERSION:-v4.5.0}
-## Python Version
+## Python Version, currently only 2.7 is supported
 PYTHON_VERSION=${PYTHON_VERSION:-2.7}
 
-#### NO CAMBIE NADA A PARTIR DE ESTA LINEA SIN SABER EXACTAMENTE LO QUE HACE
-## LexSys Modules
+#### DO NOT CHANGE ANYTHING BELOW THIS LINE, UNLESS YOU KNOW WHAT YOU'RE DOING
+## RHEL subscription login details
+RHUSER=${1}
+RHPASS=${2}
+## LexSys Modules path
 LEXAPI=${LEXHOME}/wrath
 LEXEDITOR=${LEXHOME}/EDITOR
 LEXDESK=${LEXHOME}/wpride
 LEXPORTAL=${LEXHOME}/sloth
+## URL for the lexSys supported nginx package
 LEXURL="http://download.lexsys.net/"
 if [[ $OS_VERSION == *" 7."* ]]; then
   NGINXURL=https://github.com/ecelis/nginx-headers-more-rpm/releases/download/1.10.1-TIC1/nginx-1.10.1-TIC1.el7.centos.ngx.x86_64.rpm
 elif [[ $OS_VERSION == *" 6."* ]]; then
   NGINXURL=https://github.com/ecelis/nginx-headers-more-rpm/releases/download/1.10.1-TIC1/nginx-1.10.1-TIC1.el6.ngx.x86_64.rpm
 fi
-## Repositorios de terceros
+## For RHEL systems we should register the host
 function register-rhsystem {
   subscription-manager register --username=$1 --password=$2 --auto-attach
   if [[ $OS_VERSION == "Red Hat"*" 6."* ]]; then
@@ -49,40 +49,38 @@ function register-rhsystem {
     subscription-manager repos --enable rhel-7-server-optional-rpms
   fi
 }
+## Define which EPEL package we'll need depending on the GNU/Linux distribution
+## and take the chance to register the system with RHEL if needed
 EPEL="epel-release"
 if [[ $OS_VERSION == "Red Hat"*" 6."* ]]; then
-  register-rhsystem $RHUSER $RHPASS
+#  register-rhsystem $RHUSER $RHPASS
   EPEL="https://dl.fedoraproject.org/pub/epel/epel-release-latest-6.noarch.rpm"
 elif [[ $OS_VERSION == "Red Hat"*" 7."* ]]; then
   register-rhsystem $RHUSER $RHPASS
   EPEL="https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm"
 fi
+## Install Software Collections package
 if [[ $OS_VERSION == "CentOS"* ]]; then
   yum -y install centos-release-scl
-elif [[ $OS_VERSION == "Red Hat"* ]]; then
-  echo TODO
 fi
-##
-echo -e "Iniciando instalación LexSys\n"
-echo -e "Sistema Operativo: ${OS_VERSION}\nBase de Datos: ${LEXDB}"
-echo -e "Usuario: ${LEXUSR}\nDirectorio: ${LEXHOME}"
-echo -e "Logs: ${LOGDIR}\nNodeJS: ${NODE_VERSION}\n"
+
+echo -e "Starting LexSys Install"
+echo -e "========================================================================\n\n"
+echo -e "Operating system: ${OS_VERSION}"
+echo -e "Data base: ${LEXDB}"
+echo -e "System username: ${LEXUSR}"
+echo -e "Install path: ${LEXHOME}"
+echo -e "Log directory: ${LOGDIR}\nNodeJS: ${NODE_VERSION}\n"
+echo -e "\n\n"
 sleep 5
-## Crear usuario dueño
-groupadd -g ${LEXGID} ${LEXUSR}
-useradd -m -d ${LEXHOME} -u ${LEXUID} -g ${LEXGID} -G wheel ${LEXUSR}
-## Crear Directorios
-mkdir -p ${LOGDIR}
-chmod 711 ${LEXHOME}
-chown -R ${LEXUSR}:${LEXUSR} ${LOGDIR}
-## Actualizacion del SO e instalación de repositorios de YUM extra
-yum update -y
+## Update operating system and add extra YUM repositories
 yum install -y ${EPEL}
-## nginx
+yum update -y
+## Install nginx
 yum -y install ${NGINXURL}
-# LexSys dependencias
+# LexSys dependencies
 if [[ $OS_VERSION == *" 6."* ]]; then
-  yum -y install tar gzip make gcc gcc-c++ git \
+  yum -y install tar gzip make gcc gcc-c++ git xz \
     openssl-devel pcre-devel zlib-devel \
     rh-mongodb26 rh-mongodb26-mongodb-server \
     rh-mongodb26-runtime rh-mongodb26-devel \
@@ -94,7 +92,7 @@ if [[ $OS_VERSION == *" 6."* ]]; then
   pip install virtualenv
 fi
 if [[ $OS_VERSION == *" 7."* ]]; then
-  yum -y install tar gzip make gcc gcc-c++ git \
+  yum -y install tar gzip make gcc gcc-c++ git xz \
     openssl-devel pcre-devel zlib-devel \
     python-devel python-pip \
     mongodb mongodb-server mongodb-devel sudo
@@ -103,11 +101,19 @@ if [[ $OS_VERSION == *" 7."* ]]; then
   easy_install -U setuptools
   pip install virtualenv
 fi
-
-## Instala wkhtmltopdf
+## Add the operating system user
+groupadd -g ${LEXGID} ${LEXUSR}
+useradd -m -d ${LEXHOME} -u ${LEXUID} -g ${LEXGID} -G wheel ${LEXUSR}
+## Make need directories
+mkdir -p ${LOGDIR}
+chmod 711 ${LEXHOME}
+chown -R ${LEXUSR}:${LEXUSR} ${LOGDIR}
+## Enable passwordless sudo
+echo '%wheel        ALL=(ALL)       NOPASSWD: ALL' >> /etc/sudoers
+## Install wkhtmltopdf
 yum -y install \
   http://download.gna.org/wkhtmltopdf/0.12/0.12.2.1/wkhtmltox-0.12.2.1_linux-centos6-amd64.rpm
-## Dependencias según motor de base de datos
+## Data base dependencies
 #case ${LEXDB} in
 #"postgresql")
   if [[ $OS_VERSION == *" 7."* ]]; then
@@ -144,13 +150,10 @@ yum -y install \
 #yum -y install supervisor
 cd ${TMPDIR}
 curl -LO https://nodejs.org/dist/${NODE_VERSION}/node-${NODE_VERSION}-linux-x64.tar.xz
-## Instalación de NodeJS y Node modules
+## Install NodeJS and required npm modules
 cd /usr/local
 tar --strip-components=1 \
   -xvJf ${TMPDIR}/node-${NODE_VERSION}-linux-x64.tar.xz
 sleep 5 # Sometimes it fails installing NPM packages, lets wait a moment
 npm install --loglevel info -g \
   pm2 coffee-script grunt-cli bower gulp pm2
-
-## La siguiente debe ser la última línea del script
-exit 0
