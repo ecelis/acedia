@@ -63,6 +63,15 @@ fi
 if [[ $OS_VERSION == "CentOS"* ]]; then
   yum -y install centos-release-scl
 fi
+## MongoDB repository
+cat >>/etc/yum.repos.d/mongodb.repo<<EOF
+[mongodb-org-3.2]
+name=MongoDB Repository
+baseurl=https://repo.mongodb.org/yum/amazon/2013.03/mongodb-org/3.2/x86_64/
+gpgcheck=1
+enabled=1
+gpgkey=https://www.mongodb.org/static/pgp/server-3.2.asc
+EOF
 
 echo -e "Starting LexSys Install"
 echo -e "========================================================================\n\n"
@@ -95,7 +104,7 @@ if [[ $OS_VERSION == *" 7."* ]]; then
   yum -y install tar gzip make gcc gcc-c++ git xz \
     openssl-devel pcre-devel zlib-devel \
     python-devel python-pip \
-    mongodb mongodb-server mongodb-devel sudo
+    mongodb-org sudo
   yum -y install \
     http://download.gna.org/wkhtmltopdf/0.12/0.12.2.1/wkhtmltox-0.12.2.1_linux-centos7-amd64.rpm
   easy_install -U setuptools
