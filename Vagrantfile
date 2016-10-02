@@ -2,8 +2,8 @@
 # vi: set ft=ruby :
 
 Vagrant.configure(2) do |config|
+  # No required for Docker provider
   #config.vm.box = "centos/7"
-  config.vm.box = "geerlingguy/centos7"
 
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine. In the example below,
@@ -17,7 +17,7 @@ Vagrant.configure(2) do |config|
   # Create a public network, which generally matched to bridged network.
   # Bridged networks make the machine appear as another physical device on
   # your network.
-  config.vm.network "public_network"
+  #config.vm.network "public_network"
 
   # Share an additional folder to the guest VM. The first argument is
   # the path on the host to the actual folder. The second argument is
@@ -25,9 +25,19 @@ Vagrant.configure(2) do |config|
   # argument is a set of non-required options.
   # config.vm.synced_folder "../data", "/vagrant_data"
 
-  config.vm.provider "virtualbox" do |vb|
-     # Customize the amount of memory on the VM:
-     vb.memory = "1024"
+  ## VirtualBox provider
+  #config.vm.provider "virtualbox" do |vb|
+  #   # Customize the amount of memory on the VM:
+  #   vb.memory = "2048"
+  #end
+  ## Docker provider from CentOS offical image
+  #config.vm.provider "docker" do |d|
+  #  d.image = "centos:7"
+  #end
+  ## Docker provider build Dockerfile
+  config.vm.provider "docker" do |d|
+    d.build_dir = "."
+    d.keep_running = false
   end
 
   # Define a Vagrant Push strategy for pushing to Atlas. Other push strategies
@@ -41,4 +51,8 @@ Vagrant.configure(2) do |config|
   # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
   # documentation for more information about their specific syntax and use.
   config.vm.provision "shell", path: "bootstrap.sh"
+  ## Ansible provisioner
+  #config.vm.provision "ansible" do |ansible|
+  #  ansible.playbook = "../vainglory/ansible/base-provision-playbook.yaml"
+  #end
 end

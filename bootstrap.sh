@@ -73,6 +73,19 @@ enabled=1
 gpgkey=https://www.mongodb.org/static/pgp/server-3.2.asc
 EOF
 
+## Docker repo
+tee /etc/yum.repos.d/docker.repo <<-'EOF'
+[dockerrepo]
+name=Docker Repository
+baseurl=https://yum.dockerproject.org/repo/main/centos/7/
+enabled=1
+gpgcheck=1
+gpgkey=https://yum.dockerproject.org/gpg
+EOF
+
+## Ignore packages provided by TIC or third parties
+echo 'exclude=nginx*' >> /etc/yum.conf
+
 echo -e "Starting LexSys Install"
 echo -e "========================================================================\n\n"
 echo -e "Operating system: ${OS_VERSION}"
@@ -109,10 +122,17 @@ if [[ $OS_VERSION == *" 7."* ]]; then
     http://download.gna.org/wkhtmltopdf/0.12/0.12.2.1/wkhtmltox-0.12.2.1_linux-centos7-amd64.rpm
   easy_install -U setuptools
   pip install virtualenv
+  # Docker only for RHELCentOS >= 7
+  yum -y install docker-engine
 fi
 ## Add the operating system user
 groupadd -g ${LEXGID} ${LEXUSR}
-useradd -m -d ${LEXHOME} -u ${LEXUID} -g ${LEXGID} -G wheel ${LEXUSR}
+if [ $OS_VERSION == *" 7."* ]
+then
+  useradd -m -d ${LEXHOME} -u ${LEXUID} -g ${LEXGID} -G wheel docker ${LEXUSR}
+else
+  useradd -m -d ${LEXHOME} -u ${LEXUID} -g ${LEXGID} -G wheel ${LEXUSR}
+fi
 ## Make need directories
 mkdir -p ${LOGDIR}
 chmod 711 ${LEXHOME}
@@ -123,39 +143,33 @@ echo '%wheel        ALL=(ALL)       NOPASSWD: ALL' >> /etc/sudoers
 yum -y install \
   http://download.gna.org/wkhtmltopdf/0.12/0.12.2.1/wkhtmltox-0.12.2.1_linux-centos6-amd64.rpm
 ## Data base dependencies
-#case ${LEXDB} in
-#"postgresql")
-  if [[ $OS_VERSION == *" 7."* ]]; then
-    # CentOS 7 yum install http://yum.postgresql.org/9.4/redhat/rhel-7-x86_64/pgdg-centos94-9.4-2.noarch.rpm -y
-    yum -y install http://yum.postgresql.org/9.4/redhat/rhel-7-x86_64/pgdg-centos94-9.4-2.noarch.rpm
-    # Add psql binaries to lexusr PATH
-  elif [[ $OS_VERSION == *" 6."* ]]; then
-    # CentOS 6 http://yum.postgresql.org/9.4/redhat/rhel-6-x86_64/pgdg-centos94-9.4-2.noarch.rpm
-    yum install http://yum.postgresql.org/9.4/redhat/rhel-6-x86_64/pgdg-redhat94-9.4-1.noarch.rpm -y
-  fi
-  yum -y install libpqxx libpqxx-devel \
-    postgresql94 postgresql94-contrib postgresql94-devel
+if [[ $OS_VERSION == *" 7."* ]]; then
+  # CentOS 7 yum install http://yum.postgresql.org/9.4/redhat/rhel-7-x86_64/pgdg-centos94-9.4-2.noarch.rpm -y
+  yum -y install http://yum.postgresql.org/9.4/redhat/rhel-7-x86_64/pgdg-centos94-9.4-2.noarch.rpm
   # Add psql binaries to lexusr PATH
-  echo 'export PATH=/usr/pgsql-9.4/bin:$PATH' >> /etc/profile
-#  ;;
-#"oracle")
-  yum -y install libaio
-  cd ${TMPDIR}
-  curl -LO http://descarga.lexsys.net/oracle/oracle-instantclient12.1-basic-12.1.0.2.0-1.x86_64.rpm
-  curl -LO http://descarga.lexsys.net/oracle/oracle-instantclient12.1-devel-12.1.0.2.0-1.x86_64.rpm
-  rpm -Uvh ${TMPDIR}/oracle-instantclient*.rpm
-  if [[ -d /usr/lib/oracle/11.2/client64 ]]; then
-    ORACLE_HOME=/usr/lib/oracle/11.2/client64
-    LD_LIBRARY_PATH=${ORACLE_HOME}/lib
-  elif [[ -d /usr/lib/oracle/12.1/client64 ]]; then
-    ORACLE_HOME=/usr/lib/oracle/12.1/client64
-    LD_LIBRARY_PATH=${ORACLE_HOME}/lib
-  fi
-  echo "export ORACLE_HOME=${ORACLE_HOME}" >> /etc/profile
-  echo "export LD_LIBRARY_PATH=$ORACLE_HOME/lib" >> /etc/profile
-  ldconfig
-#  ;;
-#esac
+elif [[ $OS_VERSION == *" 6."* ]]; then
+  # CentOS 6 http://yum.postgresql.org/9.4/redhat/rhel-6-x86_64/pgdg-centos94-9.4-2.noarch.rpm
+  yum install http://yum.postgresql.org/9.4/redhat/rhel-6-x86_64/pgdg-redhat94-9.4-1.noarch.rpm -y
+fi
+yum -y install libpqxx libpqxx-devel \
+  postgresql94 postgresql94-contrib postgresql94-devel
+# Add psql binaries to lexusr PATH
+echo 'export PATH=/usr/pgsql-9.4/bin:$PATH' >> /etc/profile
+yum -y install libaio
+cd ${TMPDIR}
+curl -LO http://descarga.lexsys.net/oracle/oracle-instantclient12.1-basic-12.1.0.2.0-1.x86_64.rpm
+curl -LO http://descarga.lexsys.net/oracle/oracle-instantclient12.1-devel-12.1.0.2.0-1.x86_64.rpm
+rpm -Uvh ${TMPDIR}/oracle-instantclient*.rpm
+if [[ -d /usr/lib/oracle/11.2/client64 ]]; then
+  ORACLE_HOME=/usr/lib/oracle/11.2/client64
+  LD_LIBRARY_PATH=${ORACLE_HOME}/lib
+elif [[ -d /usr/lib/oracle/12.1/client64 ]]; then
+  ORACLE_HOME=/usr/lib/oracle/12.1/client64
+  LD_LIBRARY_PATH=${ORACLE_HOME}/lib
+fi
+echo "export ORACLE_HOME=${ORACLE_HOME}" >> /etc/profile
+echo "export LD_LIBRARY_PATH=$ORACLE_HOME/lib" >> /etc/profile
+ldconfig
 #yum -y install supervisor
 cd ${TMPDIR}
 curl -LO https://nodejs.org/dist/${NODE_VERSION}/node-${NODE_VERSION}-linux-x64.tar.xz
@@ -164,5 +178,5 @@ cd /usr/local
 tar --strip-components=1 \
   -xvJf ${TMPDIR}/node-${NODE_VERSION}-linux-x64.tar.xz
 sleep 5 # Sometimes it fails installing NPM packages, lets wait a moment
-npm install --loglevel info -g \
+/usr/local/bin/npm install --loglevel info -g \
   pm2 coffee-script grunt-cli bower gulp pm2
