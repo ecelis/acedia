@@ -16,4 +16,4 @@ LexSys install ready to be deployed.
     docker build -t lexsys/base:harley .
 
 
-* Current release is **Harley Quinn**
+* Current release is **Edward Nigma**
