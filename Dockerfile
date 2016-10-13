@@ -8,7 +8,7 @@ FROM centos:7
 MAINTAINER Ernesto Celis <ernesto@tic.uno>
 
 ## Bootstrap Operating System
-COPY bootstrap.sh ./
+COPY src /
 RUN ./bootstrap.sh ; \
   rm /tmp/*.rpm ; \
   rm /tmp/*.tar.?z ; \
