@@ -1,14 +1,10 @@
-# LexSys Docker Base Image
+# LexSys JPMS base image
 
-There are two images, one is the Base Image which holds everything
-needed to run all LexSys modules. Currently the Base Image is a CentOS 7
-minimal install plus required dependencies to run LexSys.
-
-The main image is built from this one and it holds an actual
-LexSys install ready to be deployed.
+CentOS 7 image MongoDB 3.2, Oracle Instant Client 12, PostgreSQL 9.4 and
+NodeJS 5.4.2 pre-installed. lexusr system user.
 
 
-### Build Base Image
+## Build
 
 
     git clone git@github.com:ecelis/acedia.git
