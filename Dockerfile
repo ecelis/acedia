@@ -4,7 +4,7 @@
 ##
 ##    docker -t lexsys:base[:tag] .
 ##
-FROM centos:7
+FROM centos:latest
 MAINTAINER Ernesto Celis <ernesto@tic.uno>
 
 ## Bootstrap Operating System
