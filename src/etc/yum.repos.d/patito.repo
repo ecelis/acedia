@@ -1,0 +1,4 @@
+[patito]
+name=patito.ninja
+baseurl=https://patito.club/yum/centos/7/
+gpgcheck=0
