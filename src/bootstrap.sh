@@ -34,13 +34,6 @@ LEXEDITOR=${LEXHOME}/EDITOR
 LEXDESK=${LEXHOME}/wpride
 LEXPORTAL=${LEXHOME}/sloth
 
-## URL for the lexSys supported nginx package
-#LEXURL="http://download.lexsys.net/"
-#if [[ $OS_VERSION == *" 7."* ]]; then
-#  NGINXURL=https://github.com/ecelis/nginx-headers-more-rpm/releases/download/1.10.1-TIC1/nginx-1.10.1-TIC1.el7.centos.ngx.x86_64.rpm
-#elif [[ $OS_VERSION == *" 6."* ]]; then
-#  NGINXURL=https://github.com/ecelis/nginx-headers-more-rpm/releases/download/1.10.1-TIC1/nginx-1.10.1-TIC1.el6.ngx.x86_64.rpm
-#fi
 ## For RHEL systems we should register the host
 function register-rhsystem {
   subscription-manager register --username=$1 --password=$2 --auto-attach
@@ -79,7 +72,7 @@ elif [[ $OS_VERSION == *" 6."* ]]; then
 fi
 
 ## Ignore CentOS or EPEL packages provided by TIC or third parties
-echo 'exclude=nginx*' >> /etc/yum.conf
+#echo 'exclude=nginx*' >> /etc/yum.conf
 
 ## Print bootstrap summary
 echo -e "Starting LexSys Install"
@@ -135,8 +128,6 @@ chown -R ${LEXUSR}:${LEXUSR} ${LOGDIR}
 
 ## Enable passwordless sudo
 echo '%wheel        ALL=(ALL)       NOPASSWD: ALL' >> /etc/sudoers
-cd ${TMPDIR}
-#rpm -Uvh ${TMPDIR}/oracle-instantclient*.rpm
 if [[ -d /usr/lib/oracle/11.2/client64 ]]; then
   # Add psql binaries to lexusr PATH
   echo 'export PATH=/usr/pgsql-9.4/bin:$PATH' >> /etc/profile
@@ -150,10 +141,11 @@ echo "export ORACLE_HOME=${ORACLE_HOME}" >> /etc/profile
 echo "export LD_LIBRARY_PATH=$ORACLE_HOME/lib" >> /etc/profile
 ldconfig
 ## Install NodeJS and required npm modules
+cd ${TMPDIR}
 curl -LO https://nodejs.org/dist/${NODE_VERSION}/node-${NODE_VERSION}-linux-x64.tar.xz
 cd /usr/local
 tar --strip-components=1 \
   -xJf ${TMPDIR}/node-${NODE_VERSION}-linux-x64.tar.xz
 sleep 5 # Sometimes it fails installing NPM packages, lets wait a moment
-/usr/local/bin/npm install --loglevel info -g \
-  pm2 coffee-script grunt-cli bower gulp pm2
+/usr/local/bin/npm install -g pm2 coffee-script grunt-cli bower \
+  gulp pm2
