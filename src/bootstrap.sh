@@ -103,13 +103,14 @@ elif [[ $OS_VERSION == *" 7."* ]]; then
   yum -y install tar gzip make gcc gcc-c++ git xz \
     openssl-devel pcre-devel zlib-devel \
     python-devel python-pip \
-    mongodb-org nginx sudo \
+    mongodb-org sudo \
     libpqxx libpqxx-devel \
     postgresql94 postgresql94-contrib \
     postgresql94-devel libaio
   yum -y install \
     http://download.gna.org/wkhtmltopdf/0.12/0.12.2.1/wkhtmltox-0.12.2.1_linux-centos7-amd64.rpm
 fi
+yum --disablerepo=epel -y install nginx
 ## Install Oracle Instant Client
 yum -y install http://descarga.lexsys.net/oracle/oracle-instantclient12.1-basic-12.1.0.2.0-1.x86_64.rpm
 yum -y install http://descarga.lexsys.net/oracle/oracle-instantclient12.1-devel-12.1.0.2.0-1.x86_64.rpm
