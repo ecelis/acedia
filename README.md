@@ -9,7 +9,7 @@ NodeJS 5.4.2 pre-installed. lexusr system user.
 
     git clone git@github.com:ecelis/acedia.git
     cd acedia
-    docker build -t tic1/lexsys_base:nigma .
+    docker build -t tic1/lexsys_base:scarecrow .
 
 
-* Current release is **Edward Nigma**
+* Current release is *scarecrow*
