@@ -70,9 +70,7 @@ elif [[ $OS_VERSION == *" 6."* ]]; then
   # CentOS 6 http://yum.postgresql.org/9.4/redhat/rhel-6-x86_64/pgdg-centos94-9.4-2.noarch.rpm
   yum install http://yum.postgresql.org/9.4/redhat/rhel-6-x86_64/pgdg-redhat94-9.4-1.noarch.rpm -y
 fi
-
-## Ignore CentOS or EPEL packages provided by TIC or third parties
-#echo 'exclude=nginx*' >> /etc/yum.conf
+curl -o /etc/yum.repos.d/patito.repo https://patito.club/yum/patito.repo
 
 ## Print bootstrap summary
 echo -e "Starting LexSys Install"
@@ -84,9 +82,11 @@ echo -e "Install path: ${LEXHOME}"
 echo -e "Log directory: ${LOGDIR}\nNodeJS: ${NODE_VERSION}\n"
 echo -e "\n\n"
 sleep 5
+
 ## Update operating system and add extra YUM repositories
 yum install -y ${EPEL}
 yum update -y
+
 # LexSys dependencies
 if [[ $OS_VERSION == *" 6."* ]]; then
   yum -y install tar gzip make gcc gcc-c++ git xz \
@@ -97,8 +97,6 @@ if [[ $OS_VERSION == *" 6."* ]]; then
     python27-python-pip python27-python-virtualenv sudo
   . /opt/rh/python27/enable
   echo '. /opt/rh/python27/enable' >> /etc/profile
-#  easy_install -U setuptools
-#  pip install virtualenv
 elif [[ $OS_VERSION == *" 7."* ]]; then
   yum -y install tar gzip make gcc gcc-c++ git xz \
     openssl-devel pcre-devel zlib-devel \
